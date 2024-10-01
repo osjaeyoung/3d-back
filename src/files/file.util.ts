@@ -16,8 +16,8 @@ export const imageFileFilter = (
   file: Express.Multer.File,
   callback: (error: any, valid: boolean) => void,
 ) => {
-  console.log(file);
   const regex = /\.(jpg|jpeg|png|bmp)$/i;
+
   if (!file.originalname || !file.originalname.match(regex)) {
     return callback(
       new BadRequestException('File must be of type jpg|jpeg|png|bmp'),
