@@ -1,5 +1,5 @@
-import { BadRequestException } from '@nestjs/common';
 import { Request } from 'express';
+import { FileUnsupportedException } from 'src/libs/exception/file.exception';
 
 export const fileNameEditor = (
   req: Request,
@@ -20,7 +20,7 @@ export const imageFileFilter = (
 
   if (!file.originalname || !file.originalname.match(regex)) {
     return callback(
-      new BadRequestException('File must be of type jpg|jpeg|png|bmp'),
+      new FileUnsupportedException('File must be of type jpg|jpeg|png|bmp'),
       false,
     );
   }
