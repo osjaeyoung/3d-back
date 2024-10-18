@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CLI_DIR,
   FILE_UPLOAD_DIR,
+  MESHROOM_CLI_DIR,
   MESHROOM_OUTPUT_DIR,
   MESHROOM_BIN_DIR,
 } from 'src/constant/file.constant';
@@ -22,7 +22,7 @@ export class MeshroomService {
       if (files.length === 0) throw new FileNotFoundException();
 
       const pyProcess = spawn('python', [
-        CLI_DIR,
+        MESHROOM_CLI_DIR,
         MESHROOM_BIN_DIR,
         MESHROOM_OUTPUT_DIR,
         FILE_UPLOAD_DIR,
@@ -43,8 +43,9 @@ export class MeshroomService {
     try {
       process.kill(pid);
       exec();
-    } catch (e) {
-      console.error(e);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e: any) {
+      console.error(`meshroom pid:${pid} not exist`);
       exec();
     } finally {
       return 'ok';

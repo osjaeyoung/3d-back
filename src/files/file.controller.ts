@@ -4,6 +4,7 @@ import {
   Get,
   ParseFilePipe,
   Post,
+  Query,
   Res,
   UploadedFiles,
   UseInterceptors,
@@ -25,6 +26,7 @@ import {
 import { FileUploadDto } from 'src/dto/file/file.upload.dto';
 import { BadRequestException } from 'src/libs/exception/badrequest.exception';
 import { BaseException } from 'src/libs/exception/base.exception';
+import { FileDownloadDto } from 'src/dto/file/file.download.dto';
 
 @ApiTags('file')
 @Controller('file')
@@ -93,13 +95,11 @@ export class FileController {
     schema: { type: 'string', format: 'binary' },
   })
   @Get('download')
-  download(@Res() res: Response) {
-    const file = this.fileService.download();
+  download(@Res() res: Response, @Query() query: FileDownloadDto) {
+    const { file, fileName } = this.fileService.download(query);
+
     res.setHeader('Content-Type', 'text/plain');
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename=texturedMesh.obj',
-    );
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
     file.pipe(res);
   }
 }

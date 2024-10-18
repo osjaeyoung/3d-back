@@ -41,3 +41,18 @@ export const readFile = (directory: string) => {
     throw new FileNotFoundException();
   }
 };
+
+export const makeDir = (directory: string) => {
+  try {
+    const files = fs.mkdirSync(directory);
+    console.log('make files', files);
+    return files;
+  } catch (e: any) {
+    console.error(e);
+    throw new FileNotFoundException();
+  }
+};
+
+export const existsFile = (directory: string) => {
+  return fs.existsSync(directory);
+};
