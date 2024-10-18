@@ -66,15 +66,24 @@ for obj in objectList:
 
 print("{} meshes".format(len(meshes)))
 
+result = []
 for i, obj in enumerate(meshes):
   bpy.context.view_layer.objects.active = obj
+  original = {'vertex':len(obj.data.vertices), 'edge':len(obj.data.edges), 'polygon':len(obj.data.polygons)}
+
   print("{}/{} meshes, name: {}".format(i, len(meshes), obj.name))
-  print("{} has {} verts, {} edges, {} polys".format(obj.name, len(obj.data.vertices), len(obj.data.edges), len(obj.data.polygons)))
+  print("{} has {} verts, {} edges, {} polys".format(obj.name, original['vertex'], original['edge'], original['polygon']))
+
   modifier = obj.modifiers.new(modifierName,'DECIMATE')
   modifier.ratio = decimateRatio
   modifier.use_collapse_triangulate = True
   bpy.ops.object.modifier_apply(modifier=modifierName)
-  print("{} has {} verts, {} edges, {} polys after decimation".format(obj.name, len(obj.data.vertices), len(obj.data.edges), len(obj.data.polygons)))
+
+  to = {'vertex':len(obj.data.vertices), 'edge':len(obj.data.edges), 'polygon':len(obj.data.polygons)}
+  print("{} has {} verts, {} edges, {} polys after decimation".format(obj.name, to['vertex'], to['edge'], to['polygon']))
+
+  result.append({'from':original,'to':to})
 
 bpy.ops.wm.obj_export(filepath=output_model)
 print('\n Process of Decimation Finished ...')
+print('result {}'.format(result))
