@@ -1,10 +1,13 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { BlenderService } from './blender.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BaseException } from 'src/libs/exception/base.exception';
 import { BlenderRunDto } from 'src/dto/blender/blender.run.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Request } from 'express';
 
 @ApiTags('blender')
+@UseGuards(AuthGuard)
 @Controller('blender')
 export class BlenderController {
   constructor(private readonly blenderService: BlenderService) {}
@@ -29,7 +32,7 @@ export class BlenderController {
     description: '변환된 obj 파일이 존재하지 않는 경우',
   })
   @Post('run')
-  run() {
+  run(@Req() req: Request) {
     return this.blenderService.run();
   }
 }

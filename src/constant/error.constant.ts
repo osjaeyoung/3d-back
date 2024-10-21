@@ -3,4 +3,5 @@ export const ERROR = {
   UNSUPPORTED_IMAGE_TYPE: '001',
   UNCATCHED: '500',
   BAD_REQUEST: '400',
+  UNAUTHORIZED: '401',
 };
