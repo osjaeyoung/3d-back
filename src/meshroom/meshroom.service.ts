@@ -55,10 +55,10 @@ export class MeshroomService {
   stop() {
     try {
       process.kill(pid);
-      removeAllFilesSync(MESHROOM_OUTPUT_DIR);
     } catch (e) {
       console.error(e);
     } finally {
+      removeAllFilesSync(MESHROOM_OUTPUT_DIR);
       return 'ok';
     }
   }

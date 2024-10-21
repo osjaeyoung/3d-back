@@ -18,6 +18,7 @@ export const removeAllFilesSync = (directory: string) => {
     // skip
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
+    console.error(e);
     return;
   }
 };
