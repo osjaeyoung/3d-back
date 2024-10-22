@@ -4,6 +4,7 @@ import { MeshroomModule } from './meshroom/meshroom.module';
 import { ConfigModule } from '@nestjs/config';
 import { BlenderModule } from './blender/blender.module';
 import { AuthModule } from './auth/auth.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
     FileModule,
     MeshroomModule,
     BlenderModule,
+    CacheModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [`.env.${process.env.NODE_ENV}`],

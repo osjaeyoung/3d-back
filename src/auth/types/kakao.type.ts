@@ -15,7 +15,7 @@ export type KaKaoOauthTokenError = {
   error_code: string;
 };
 
-export type idToken = {
+export type KaKaoIdToken = {
   /**
    * ID 토큰이 발급된 앱의 앱 키
    */

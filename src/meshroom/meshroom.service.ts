@@ -6,65 +6,70 @@ import {
   MESHROOM_BIN_DIR,
 } from 'src/constant/file.constant';
 import { spawn } from 'child_process';
-import { readDir, removeAllFilesSync } from 'src/utils/file';
+import { existsFile, readDir, removeAllFilesSync } from 'src/utils/file';
 import { FileNotFoundException } from 'src/libs/exception/file.exception';
 import { join } from 'path';
-
-// 임시 테스트
-let pid = -1;
+import { RedisCacheService } from 'src/cache/cache.service';
+import { User } from 'src/auth/types/oauth.type';
 
 @Injectable()
 export class MeshroomService {
-  run() {
+  constructor(private readonly redisCacheService: RedisCacheService) {}
+  async run(user: User) {
     const exec = () => {
-      const files = readDir(FILE_UPLOAD_DIR);
+      const userFileUploadDir = join(FILE_UPLOAD_DIR, user.sub);
+      const files = readDir(userFileUploadDir);
 
       if (files.length === 0) throw new FileNotFoundException();
 
       const pyProcess = spawn('python', [
         MESHROOM_CLI_DIR,
         MESHROOM_BIN_DIR,
-        MESHROOM_OUTPUT_DIR,
-        FILE_UPLOAD_DIR,
+        join(MESHROOM_OUTPUT_DIR, user.sub),
+        userFileUploadDir,
       ]);
 
-      pyProcess.stdout.on('data', (data) => {
-        console.log(data.toString().replace(/\\n/g, '\n'));
-      });
+      // pyProcess.stdout.on('data', (data) => {
+      //   console.log(data.toString().replace(/\\n/g, '\n'));
+      // });
 
-      pyProcess.stderr.on('data', (data) => {
-        console.log(data.toString().replace(/\\n/g, '\n'));
-      });
+      // pyProcess.stderr.on('data', (data) => {
+      //   console.log(data.toString().replace(/\\n/g, '\n'));
+      // });
 
-      // 임시 테스트
-      pid = pyProcess.pid;
+      this.redisCacheService.set(user.sub, String(pyProcess.pid));
     };
 
     try {
-      process.kill(pid);
+      const pid = await this.redisCacheService.get(user.sub);
+      console.log(pid);
+      if (pid) process.kill(Number(pid));
       exec();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e: any) {
-      console.error(`meshroom pid:${pid} not exist`);
+      console.error(`meshroom not exist`);
       exec();
     } finally {
       return 'ok';
     }
   }
 
-  stop() {
+  async stop(user: User) {
     try {
-      process.kill(pid);
+      const pid = await this.redisCacheService.get(user.sub);
+      if (pid) process.kill(Number(pid));
     } catch (e) {
       console.error(e);
     } finally {
-      removeAllFilesSync(MESHROOM_OUTPUT_DIR);
+      if (existsFile(join(MESHROOM_OUTPUT_DIR, user.sub))) {
+        removeAllFilesSync(join(MESHROOM_OUTPUT_DIR, user.sub));
+      }
       return 'ok';
     }
   }
 
-  getState() {
-    const files = readDir(MESHROOM_OUTPUT_DIR);
+  getState(user: User) {
+    const files = readDir(join(MESHROOM_OUTPUT_DIR, user.sub));
 
     if (!files?.length) throw new FileNotFoundException();
 

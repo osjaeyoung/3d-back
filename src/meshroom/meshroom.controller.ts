@@ -1,11 +1,21 @@
-import { Controller, Get, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { MeshroomService } from './meshroom.service';
 import { MeshroomRunInterceptor } from './interceptors/meshroom.run.interceptor';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BaseException } from 'src/libs/exception/base.exception';
 import { MeshroomStateDto } from 'src/dto/meshroom/meshroom.state.dto';
+import { Request } from 'express';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('meshroom')
+@UseGuards(AuthGuard)
 @Controller('meshroom')
 export class MeshroomController {
   constructor(private readonly meshroomService: MeshroomService) {}
@@ -39,8 +49,8 @@ export class MeshroomController {
   })
   @Post('run')
   @UseInterceptors(MeshroomRunInterceptor)
-  run() {
-    return this.meshroomService.run();
+  run(@Req() req: Request) {
+    return this.meshroomService.run(req.user);
   }
 
   @ApiOperation({
@@ -54,8 +64,8 @@ export class MeshroomController {
     example: 'ok',
   })
   @Get('stop')
-  stop() {
-    return this.meshroomService.stop();
+  stop(@Req() req: Request) {
+    return this.meshroomService.stop(req.user);
   }
 
   @ApiOperation({
@@ -72,7 +82,7 @@ export class MeshroomController {
     type: MeshroomStateDto,
   })
   @Get('state')
-  state() {
-    return this.meshroomService.getState();
+  state(@Req() req: Request) {
+    return this.meshroomService.getState(req.user);
   }
 }

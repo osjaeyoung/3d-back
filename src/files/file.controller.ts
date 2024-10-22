@@ -5,8 +5,10 @@ import {
   ParseFilePipe,
   Post,
   Query,
+  Req,
   Res,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -15,7 +17,7 @@ import { diskStorage } from 'multer';
 import { fileNameEditor, imageFileFilter } from './file.util';
 import { FILE_UPLOAD_DIR } from 'src/constant/file.constant';
 import { FileUploadInterceptor } from './interceptors/file.upload.interceptor';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   ApiBody,
   ApiConsumes,
@@ -27,8 +29,11 @@ import { FileUploadDto } from 'src/dto/file/file.upload.dto';
 import { BadRequestException } from 'src/libs/exception/badrequest.exception';
 import { BaseException } from 'src/libs/exception/base.exception';
 import { FileDownloadDto } from 'src/dto/file/file.download.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { join } from 'path';
 
 @ApiTags('file')
+@UseGuards(AuthGuard)
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
@@ -61,14 +66,15 @@ export class FileController {
   @Post('upload')
   @UseInterceptors(
     FileUploadInterceptor,
-    FilesInterceptor('files', 20, {
+    FilesInterceptor('files', 6, {
       storage: diskStorage({
         filename: fileNameEditor,
-        destination: FILE_UPLOAD_DIR,
+        destination: (req, file, cb) =>
+          cb(null, join(FILE_UPLOAD_DIR, req.user.sub)),
       }),
       limits: {
         fileSize: 1000 * 1000 * 10,
-        files: 20,
+        files: 6,
       },
       fileFilter: imageFileFilter,
     }),
@@ -95,8 +101,12 @@ export class FileController {
     schema: { type: 'string', format: 'binary' },
   })
   @Get('download')
-  download(@Res() res: Response, @Query() query: FileDownloadDto) {
-    const { file, fileName } = this.fileService.download(query);
+  download(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query() query: FileDownloadDto,
+  ) {
+    const { file, fileName } = this.fileService.download(req.user, query);
 
     res.setHeader('Content-Type', 'text/plain');
     res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);

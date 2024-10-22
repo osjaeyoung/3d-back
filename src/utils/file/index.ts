@@ -46,7 +46,7 @@ export const readFile = (directory: string) => {
 export const makeDir = (directory: string) => {
   try {
     const files = fs.mkdirSync(directory);
-    console.log('make files', files);
+    console.log('make files', directory, files);
     return files;
   } catch (e: any) {
     console.error(e);

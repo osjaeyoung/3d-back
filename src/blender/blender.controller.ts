@@ -33,6 +33,6 @@ export class BlenderController {
   })
   @Post('run')
   run(@Req() req: Request) {
-    return this.blenderService.run();
+    return this.blenderService.run(req.user);
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createReadStream } from 'fs';
+import { User } from 'src/auth/types/oauth.type';
 import { BLENDER_FILE_DIR, MESHROOM_OBJ_DIR } from 'src/constant/file.constant';
 import { FileDownloadDto } from 'src/dto/file/file.download.dto';
 import { BadRequestException } from 'src/libs/exception/badrequest.exception';
@@ -13,7 +14,7 @@ export class FileService {
     }
   }
 
-  download(query: FileDownloadDto) {
+  download(user: User, query: FileDownloadDto) {
     const read = (dir: string) => {
       readFile(dir);
       const file = createReadStream(dir);
@@ -22,11 +23,11 @@ export class FileService {
     };
 
     if (Object.keys(query).length === 0) {
-      return read(MESHROOM_OBJ_DIR);
+      return read(MESHROOM_OBJ_DIR(user.sub));
     }
 
     if (query.type === 'blender') {
-      return read(BLENDER_FILE_DIR);
+      return read(BLENDER_FILE_DIR(user.sub));
     }
 
     throw new BadRequestException('file type not matched');
