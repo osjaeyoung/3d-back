@@ -29,7 +29,16 @@ export class InitSwaggerDocument {
          <br>
          <br>
          **참고**<br>
-         - 빠른 프로토 타이핑을 위해 기본적인 api 로직이 들어있습니다. 기능 추가 및 validation은 계속 추가해나갈 예정입니다. 진행하시면서 언제든지 질문 주세요!!
+         - 빠른 프로토 타이핑을 위해 기본적인 api 로직이 들어있습니다. 기능 추가 및 validation은 계속 추가해나갈 예정입니다. 진행하시면서 언제든지 질문 주세요!!<br>
+         <br>
+         **<h4>[10.23 추가]</h4>**
+         auth 인증은 **Bearer 인증** 방식으로 넘겨주시면 됩니다!!<br><br>
+         1. 소셜 로그인 연동 (OAuth) 로그인<br>
+         - **auth/url** : provider(\`kakao | google\`) 쿼리를 통해 kakao 혹은 google 로그인 url을 생성합니다.<br>
+         - **auth/login** : 로그인을 통해 전달받은 \`code\` 및 provider(\`kakao | google\`) 정보를 전달하여 accessToken을 생성합니다.<br>
+         2. 자체 회원가입 / 로그인<br>
+         - **user/signup** : 회원가입 폼을 전달합니다. 폼 validation은 스키마 정의를 참고해주세요.<br>
+         - **user/signin** : 사용자 id, pwd를 전달받아 accessToken을 생성합니다.<br>
          `,
       )
       .build();
