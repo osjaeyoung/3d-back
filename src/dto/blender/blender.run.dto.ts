@@ -50,3 +50,11 @@ export class BlenderRunDto {
   })
   data: BlenderResult[];
 }
+
+export class BlenderRunBodyDto {
+  @ApiProperty({
+    type: 'string',
+    required: true,
+  })
+  meshUrl: string;
+}

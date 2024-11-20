@@ -5,6 +5,13 @@ export const FILE_BASE_DIR = join(process.cwd(), 'file');
 export const FILE_UPLOAD_DIR = join(FILE_BASE_DIR, 'upload');
 
 /**
+ * csm.ai
+ */
+export const CSM_AI_OUTPUT_DIR = join(FILE_BASE_DIR, 'csm.ai');
+export const CSM_AI_OBJ_DIR = (id: string) =>
+  join(CSM_AI_OUTPUT_DIR, id, 'mesh.obj');
+
+/**
  * meshroom
  */
 export const MESHROOM_OUTPUT_DIR = join(FILE_BASE_DIR, 'meshroom');
