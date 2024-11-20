@@ -15,6 +15,16 @@ export type GoogleOauthTokenError = {
   error_description: string;
 };
 
+export type GoogleUserInfo = {
+  sub: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+  email: string;
+  email_verified: boolean;
+};
+
 export type GoogleIdToken = {
   /**
    * ID 토큰이 발급된 앱의 앱 키

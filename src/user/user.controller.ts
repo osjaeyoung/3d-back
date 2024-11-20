@@ -46,6 +46,14 @@ export class UserController {
           example:
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0MSIsImlzcyI6Imh0dHBzOi8vZGl5cGFwZXIubmV0IiwiZXhwIjoxNzI5NjgxMjE5LCJpYXQiOjE3Mjk2Nzc2MTl9.nDTUoY0Rv-YF5BeWyihbJEEsnSVose7QRuhLJlsPYHM',
         },
+        name: {
+          type: 'string',
+          example: '김아무개',
+        },
+        email: {
+          type: 'string',
+          example: 'papertoy@gmail.com"',
+        },
       },
     },
   })

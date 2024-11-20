@@ -15,6 +15,12 @@ export type KaKaoOauthTokenError = {
   error_code: string;
 };
 
+export type KakaoUserInfo = {
+  sub: string;
+  nickname: string;
+  email: string;
+  email_verified: boolean;
+};
 export type KaKaoIdToken = {
   /**
    * ID 토큰이 발급된 앱의 앱 키

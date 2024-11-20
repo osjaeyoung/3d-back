@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { google, kakao } from 'src/constant/oauth.constant';
-import { CreateKaKaoOauthTokenRes, KaKaoIdToken } from './types/kakao.type';
+import {
+  CreateKaKaoOauthTokenRes,
+  KaKaoIdToken,
+  KakaoUserInfo,
+} from './types/kakao.type';
 import { JwtService } from '@nestjs/jwt';
 import { BadRequestException } from 'src/libs/exception/badrequest.exception';
-import { CreateGoogleOauthTokenRes, GoogleIdToken } from './types/google.type';
+import {
+  CreateGoogleOauthTokenRes,
+  GoogleIdToken,
+  GoogleUserInfo,
+} from './types/google.type';
 
 @Injectable()
 export class AuthService {
@@ -52,9 +60,21 @@ export class AuthService {
 
       const { id_token, ...rest } = data;
       const idToken = this.jwtService.decode<GoogleIdToken>(id_token);
-      console.log(idToken);
       const payload = { ...idToken, token: rest };
-      return { accessToken: this.jwtService.sign(payload) };
+
+      const userInfoRes = await fetch(
+        google.getUserInfoUrl(rest.access_token),
+        {
+          method: 'GET',
+        },
+      );
+      const userInfo: GoogleUserInfo = await userInfoRes.json();
+
+      return {
+        accessToken: this.jwtService.sign(payload),
+        name: userInfo.name,
+        email: userInfo.email,
+      };
     }
 
     if (provider === 'kakao') {
@@ -80,7 +100,19 @@ export class AuthService {
       const idToken = this.jwtService.decode<KaKaoIdToken>(id_token);
       const payload = { ...idToken, token: rest };
 
-      return { accessToken: this.jwtService.sign(payload) };
+      const userInfoRes = await fetch(kakao.getUserInfoUrl(), {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${rest.access_token}`,
+        },
+      });
+      const userInfo: KakaoUserInfo = await userInfoRes.json();
+
+      return {
+        accessToken: this.jwtService.sign(payload),
+        name: userInfo.nickname,
+        email: userInfo.email,
+      };
     }
 
     throw new BadRequestException('provider dose not match');
